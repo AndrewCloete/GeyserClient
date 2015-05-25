@@ -4,10 +4,22 @@ import json
 import sys
 import RPi.GPIO as GPIO
 
-
+# --------------------- Sanity checking arguments ------------------------
 if(len(sys.argv) != 2):
-        print('Usage: pyhton pythonUDPclient <geyser_id>')
+        print('Usage: pyhton pythonUDPclient <geyser_ID>')
         sys.exit(0)
+
+try:
+	GEYSER_ID = long(sys.argv[1])
+
+	if(GEYSER_ID < 1230 or GEYSER_ID > 1240):
+		print('ID not valid: (Value between 1230 and 1240)')
+		sys.exit(0)
+		
+except ValueError:
+	print('ID not valid: (Value between 1230 and 1240)')
+	sys.exit(0)
+# -----------------------------------------------------------------------
 
 def readlineCR(port):
     rv = ""
@@ -21,9 +33,6 @@ def readlineCR(port):
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(27, GPIO.OUT)
-
-
-GEYSER_ID = long(sys.argv[1])
 
 port = serial.Serial("/dev/ttyAMA0", baudrate=115200, timeout=3.0)
 

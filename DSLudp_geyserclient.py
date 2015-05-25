@@ -10,15 +10,43 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(27, GPIO.OUT)
 
 
-
+# --------- Sanity checking arguments --------------------------------
 if(len(sys.argv) != 4):
-        print('Usage: pyhton pythonUDPclient <udp_IP_address> <udp_port> <geyser_id>')
+        print('Usage: pyhton pythonUDPclient <udp_IP_address> <udp_PORT> <geyser_ID>')
         sys.exit(0)
 
+try:
+	UDP_IP = sys.argv[1]
+	socket.inet_aton(UDP_IP)
+except socket.error:
+	print('IP address not valid.')
+	sys.exit(0)
 
-UDP_IP = sys.argv[1]
-UDP_PORT = int(sys.argv[2])
-GEYSER_ID = long(sys.argv[3])
+try:
+	UDP_PORT = int(sys.argv[2])
+
+	if(UDP_PORT != 3535 and UDP_PORT != 6565):
+		print('PORT not valid: (Either 3535 or 6565)')
+		sys.exit(0)
+		
+except ValueError:
+	print('PORT not valid.')
+	sys.exit(0)
+
+try:
+	GEYSER_ID = long(sys.argv[3])
+
+	if(GEYSER_ID < 1230 or GEYSER_ID > 1240):
+		print('ID not valid: (Between 1230 and 1240)')
+		sys.exit(0)
+		
+except ValueError:
+	print('ID not valid: (Between 1230 and 1240)')
+	sys.exit(0)
+
+# -----------------------------------------------------------------------
+
+
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.settimeout(2)
