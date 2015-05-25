@@ -1,4 +1,5 @@
-
+------------------------------------------------------------------------------------
+ *** Default firmware AT commands from AT_Command_Interface_Guide_746 Booysen.pdf ***
 
 //Setup packet data protocol PDP
 AT+CGDCONT?
@@ -27,7 +28,7 @@ AT+CDNSCFG="62.40.32.33","62.40.32.34"
 
 
 ------------------------------------------------------------------------------------
-Isaac TCP/IP SmartPack AT commands document
+*** SmartPack firmware AT commands form Maestro_100_Series_2013_SmartPack_User_Manual_v2.pdf (Isaac Masuku) ***
 
 GPRS network parameters 
 at+ipgprs?
@@ -48,15 +49,88 @@ AT+OTCP
 
 //UDP connection
 AT+IPUDP?
-AT+IPUDP=3535,"C","52.10.236.177",0
-AT+IPUDP=6565,"C","52.10.236.177",0
+AT+IPUDP=3535,"C","52.10.236.177",0 (EC2 geyserNIP address)
+AT+IPUDP=6565,"C","52.10.236.177",0 (EC2 UDPechoServer address for debugging)
 AT+OUDP
 
+--------------------------------------------------------------------------------------
+*** General usefull commands from AT_Command_Interface_Guide_746 Booysen.pdf ***
 
-AT+IPPING=2,"74.125.224.72",3,1,15
+//Store parameter in EEPROM after a new settings are entered
+AT&W
+
+//Disable echo
+ATE0
+
+//Enable echo
+ATE1
+
+//Baud rate
+AT+IPR=<rate>
+
+//Local flow control
+AT+IFC?
+AT+IFC=<DCE_by_DTE>,<DTE_by_DCE>
+AT+IFC=0,0 //Disables flow control
+AT+IFC=2,2 //Enables flow control
+
+---------------------------------------------------------------------------------------
+*** SmartPack firmware update procedure. ***
+
+This is just a short summary of the procedure for enabling the TCP/IP stack on the Maestro100EVO-AD modems.
+For some reason the Maestro does not have the TCP/IP stack enable by default.
+
+Enabling it requires doing a firmware update by installing the SmartPack firmware.
+The attached zip file contains the firmware (*.dwl), configuration software, Hyperterminal software and the required documentation.
+
+Preparation:
+	Do update using a command-line interface. Specifically use Hyperterminal since it allows direct file transfer.
+	Do NOT use a USB-serial converter cable. Use a PC with a direct serial port.
+
+Basic procedure:
+	First check the current firmware version using the following command:
+	AT+VAFV
+	(If you get an ERROR, it means SmartPack is not installed, and you should continue with the procedure)
+	
+	Issue the following AT commands in order:
+	AT+WOPEN=0
+	AT+WOPEN=3
+	AT+WOPEN=4
+	AT+WDWL
+
+This last command should respond with "+WDWL: 0", and then with waiting signs "$$$$$$...."
+This is your cue to start uploading the firmware.
+Use Hyperterminal Transfer --> Send File.
+Select the *.dwl file (and be sure to select the 1KX Modem protocol.)
+
+After the upload finishes, restart the modem using the following command.
+	AT+CFUN=1
+
+Enter AT+WOPEN=1 after AT+CFUN=1.
+
+The modem should now ask you for an activation key which you can get from Trintel (Isaac Masuku <isaac@trintel.co.za> ) by giving them the IMEI number of the modem. It will look something like this: (IMEI: 359983007971918     KEY: 9A6127C04F19AE3F5CF6E954BA12A457)
+
+Enter the activation key as follows:
+	AT+PSSW="XXXXXXXXXXXXXX....XX"
+
+Check if the firmware upgrade was successful using the following command:
+	AT+VAFV
+
+If you get an ERROR message, repeat the above process.
+
+Three initial security keys:
+359983007971918  ----------------------  9A6127C04F19AE3F5CF6E954BA12A457 
+359983007913688  ----------------------  93C55EA81A71DD631FDAFE3E7423AE80
+359983007972098  ----------------------  A4D71990BB7E76519E890F6A4E9B637A
+
+PLEASE NOTE: I have used this method on 3 modems and only managed to successfully upgrade 1. 
+
+------------------------------------------------------------------------------------------------------------------------
 
 
-GET / HTTP/1.1
+
+
+
 
 
 
