@@ -1,0 +1,64 @@
+
+
+//Setup packet data protocol PDP
+AT+CGDCONT?
+AT+CGDCONT=1,"IP"
+AT+CGDCONT=1,"IP","internet"
+
+//GPRS Attach or Detach +CGATT
+AT+CGATT?
+AT+CGATT=1
+
+//PDP Context Activate or Deactivate +CGACT
+AT+CGACT?
+AT+CGACT=1,1
+
+//Request GPRS IP Service D
+//(Pending...)
+ATD*99***1#
+
+
+//Enter Data State +CGDATA
+AT+CGDATA=?
+AT+CGDATA=1
+
+//?? problem: See http://www.edaboard.com/thread147142.html
+AT+CDNSCFG="62.40.32.33","62.40.32.34"
+
+
+------------------------------------------------------------------------------------
+Isaac TCP/IP SmartPack AT commands document
+
+GPRS network parameters 
+at+ipgprs?
+at+ipgprs=1,"internet","guest"
+
+//Activating GPRS connection
+AT+CGATT?
+AT+CGATT=1
+
+
+AT+IPCONNECT?
+AT+IPCONNECT=1,1
+
+//TCP connection
+AT+IPTCP?
+AT+IPTCP=80,"C","74.125.224.72",0
+AT+OTCP
+
+//UDP connection
+AT+IPUDP?
+AT+IPUDP=3535,"C","52.10.236.177",0
+AT+IPUDP=6565,"C","52.10.236.177",0
+AT+OUDP
+
+
+AT+IPPING=2,"74.125.224.72",3,1,15
+
+
+GET / HTTP/1.1
+
+
+
+
+
