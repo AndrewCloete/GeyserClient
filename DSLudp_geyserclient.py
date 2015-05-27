@@ -62,11 +62,13 @@ while True:
 
         print("Settings from NSCL: " + recv_data)
         json_recv_data = json.loads(recv_data)
-        led_state = json_recv_data["e"]
+	if json_recv_data["status"] == "ACK":
+		print("SUCCESS")
+        	led_state = json_recv_data["e"]
 
-        if led_state == 'true':
+        if led_state == 'ON':
                 GPIO.output(27, True)
-        elif led_state == 'false':
+        elif led_state == 'OFF':
                 GPIO.output(27, False)
 
         data = {"id":GEYSER_ID, "t1":55, "t2":35, "e":led_state}

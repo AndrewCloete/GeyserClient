@@ -49,14 +49,15 @@ while True:
         led_state = 'false' #Default (Safe) state
         try:
                 json_recv_data = json.loads(recv_data)
-                led_state = json_recv_data["e"]
-                print("SUCCESS - LED state: " + led_state)
+                if json_recv_data["status"] == "ACK":
+			print("SUCCESS")
+        		led_state = json_recv_data["e"]
         except ValueError:
                 print("ERROR - JSON decode error. Recv data from server corrupt")
 
-        if led_state == 'true':
+        if led_state == 'ON':
                 GPIO.output(27, True)
-        elif led_state == 'false':
+        elif led_state == 'OFF':
                 GPIO.output(27, False)
         else:
                 GPIO.output(27, False)
