@@ -5,11 +5,6 @@ import sys
 
 import RPi.GPIO as GPIO
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(27, GPIO.OUT)
-
-
 # --------- Sanity checking arguments --------------------------------
 if(len(sys.argv) != 4):
         print('Usage: pyhton pythonUDPclient <udp_IP_address> <udp_PORT> <geyser_ID>')
@@ -47,10 +42,48 @@ except ValueError:
 # -----------------------------------------------------------------------
 
 
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(27, GPIO.OUT)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.settimeout(2)
 
+
+# ------------- Declare and initialize system parameters ----------------
+led_state = False
+
+# -----------------------------------------------------------------------
+
+
+# ------------------- INBOUND COMMAND HANDLERS -------------------------          
+def switchElement(key, argument):
+        if argument == 'ON':
+                GPIO.output(27, True)
+		led_state = True
+        elif argument == 'OFF':
+                GPIO.output(27, False)
+		led_state = False
+	print('Switching element: ' + led_state)
+
+
+def status(key, argument):
+	print('Status: ' + argument)
+
+def error_handler(key, argument):
+	print('Command not recognised: '+ key)
+
+# ----------------------------------------------------------------------
+
+
+#Command dictionary
+handleCommand = {	"e": switchElement,
+			"status": status}
+
+
+
+
+# ------------------- MAIN CONTROL LOOP -------------------------------
 data = {"id":GEYSER_ID, "t1":55, "t2":35, "e":"false"}
 while True:
         data_str = json.dumps(data)
@@ -58,19 +91,20 @@ while True:
         try:
                 recv_data, recv_addr = sock.recvfrom(4096)
         except socket.error:
-                print('UDP recieve timeout')
+                print('UDP recieve timeout.')
 
         print("Settings from NSCL: " + recv_data)
         json_recv_data = json.loads(recv_data)
 	if json_recv_data["status"] == "ACK":
-		print("SUCCESS")
-        	led_state = json_recv_data["e"]
-
-        if led_state == 'ON':
-                GPIO.output(27, True)
-        elif led_state == 'OFF':
-                GPIO.output(27, False)
+		
+		for key in json_recv_data:
+			handleCommand.get(key, error_handler)(json_recv_data[key])
 
         data = {"id":GEYSER_ID, "t1":55, "t2":35, "e":led_state}
         time.sleep(5)
+# ----------------------------------------------------------------------
+
+
+
+
 

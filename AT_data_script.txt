@@ -53,6 +53,20 @@ AT+IPUDP=3535,"C","52.10.236.177",0 (EC2 geyserNIP address)
 AT+IPUDP=6565,"C","52.10.236.177",0 (EC2 UDPechoServer address for debugging)
 AT+OUDP
 
+*** Auto UDP connection mode ***
+
+//BEFORE SETTING AUTO UDP, BE SURE THAT THE FOLLOWING IS CORRECT
+AT+IPUDP?
+AT+IPGPRS?
+
+//Enable 
+AT+AUTOUDP=1
+
+//Disable auto UDP mode (Must happen within 20sec of startup)
+AT+AUTOUDP=0
+
+
+
 --------------------------------------------------------------------------------------
 *** General usefull commands from AT_Command_Interface_Guide_746 Booysen.pdf ***
 
