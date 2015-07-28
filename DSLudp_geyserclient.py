@@ -64,7 +64,7 @@ def switchElement(key, argument):
         elif argument == 'OFF':
                 GPIO.output(27, False)
 		led_state = False
-	print('Switching element: ' + led_state)
+	print('Switching element: ' + argument)
 
 
 def status(key, argument):
